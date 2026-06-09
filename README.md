@@ -72,9 +72,50 @@ scipy         # Pearson correlation
 ##   Interactive Dashboard
 Alongside the notebook, this project includes a standalone interactive dashboard that brings all 7 storytelling stages to life in a single HTML file no Python or Jupyter required.
 
-- **Link to Dashboard**
+**[View the Dashboard →](./mental_health_dashboard.html)**
 
-file:///C:/Users/himab/Downloads/mental_health_dashboard.html
+> If you have GitHub Pages enabled, the dashboard is also accessible at:
+> `https://<your-username>.github.io/<your-repo>/mental_health_dashboard.html`
+
+### What the dashboard includes
+
+| Section | Visuals |
+|---|---|
+| Hero | Randomized people-grid (100 Americans) |
+| Context | Switchable trend line (2011–2023) · Conditions donut chart |
+| Conflict | Treatment gap bar chart · Prevalence vs gap bubble chart |
+| Journey | Age prevalence + treatment rate · Gender comparison · COVID impact · Barrier breakdown |
+| Resolution | Current vs projected treatment funnel (side-by-side) |
+| Call to Action | Intervention priority table · Impact vs feasibility scatter plot |
+| Human Cost | Gen Z mental health timeline · MH spending vs youth suicide rate |
+
+### How to open it locally
+
+```bash
+# Just download and double-click, or:
+open mental_health_dashboard.html        # macOS
+start mental_health_dashboard.html       # Windows
+```
+
+> **Note:** The dashboard loads Chart.js and fonts from a CDN.
+> An internet connection is required for charts to render correctly.
+
+---
+
+##  Data Sources
+
+| Source | What It Provides |
+|---|---|
+| SAMHSA NSDUH | Annual mental health prevalence by condition, age, gender |
+| CDC NCHS | Suicide rates and mortality data |
+| NAMI | Treatment gap estimates and survey data on barriers to care |
+| Kaiser Family Foundation | State-level MH spending and provider availability |
+| CDC BRFSS | State-level prevalence indicators and trends |
+
+> Data in this project is **modeled after** reported averages and ranges from the sources above.
+> Datasets are synthetically generated for reproducibility; no external API or download required.
+
+---
 
 ---
 
@@ -91,7 +132,7 @@ file:///C:/Users/himab/Downloads/mental_health_dashboard.html
 
 1. **The crisis keeps growing** - prevalence rose every year from 2011 to 2023, with the sharpest jump during COVID-19.
 2. **55% receive no treatment** - substance use disorder and PTSD have the largest untreated populations.
-3. **Young adults are most at risk** - ages 18–25 have the highest prevalence but the lowest treatment rates.
+3. **Young adults are most at risk** - ages 18-25 have the highest prevalence but the lowest treatment rates.
 4. **Geography determines access** - states with more providers and higher spending have measurably better outcomes.
 5. **Investment saves lives** - states that spend more on mental health have lower youth suicide rates.
 
