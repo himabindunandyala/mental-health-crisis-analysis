@@ -72,10 +72,8 @@ scipy         # Pearson correlation
 ##   Interactive Dashboard
 Alongside the notebook, this project includes a standalone interactive dashboard that brings all 7 storytelling stages to life in a single HTML file no Python or Jupyter required.
 
-**[View the Dashboard →](./mental_health_dashboard.html)**
+**[View the Dashboard →](https://himabindunandyala.github.io/mental-health-crisis-analysis/mental_health_dashboard.html)**
 
-> If you have GitHub Pages enabled, the dashboard is also accessible at:
-> `https://<your-username>.github.io/<your-repo>/mental_health_dashboard.html`
 
 ### What the dashboard includes
 
