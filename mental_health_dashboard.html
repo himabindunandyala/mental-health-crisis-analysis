@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Silent Epidemic: America's Mental Health Crisis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --dark:   #0d0d1a;
+    --navy:   #13132b;
+    --panel:  #181830;
+    --blue:   #0f3460;
+    --accent: #e94560;
+    --warm:   #f5a623;
+    --teal:   #00b4d8;
+    --green:  #7bed9f;
+    --light:  #c8c8e0;
+    --muted:  #7070a0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--light);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    background: radial-gradient(ellipse at 60% 40%, #1c1040 0%, var(--dark) 65%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 80%, rgba(233,69,96,.07) 0%, transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(0,180,216,.06) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.4rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 7vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    color: #fff;
+    max-width: 860px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    margin-top: 1.4rem;
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  /* people grid */
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    max-width: 480px;
+    margin: 3rem auto 1.6rem;
+  }
+  .person {
+    width: 32px;
+    height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .head {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .body {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 18px solid;
+  }
+  .untreated .head, .untreated .body { background: var(--accent); border-bottom-color: var(--accent); }
+  .treated   .head, .treated .body   { background: var(--warm);   border-bottom-color: var(--warm); }
+  .healthy   .head                   { background: rgba(255,255,255,.18); }
+  .healthy   .body                   { border-bottom-color: rgba(255,255,255,.18); }
+
+  .grid-legend {
+    display: flex;
+    gap: 1.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  /* ─── NAV ─────────────────────────────────── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,13,26,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    padding: .75rem 2rem;
+    display: flex;
+    gap: 1.8rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color .2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  /* ─── LAYOUT ──────────────────────────────── */
+  .section {
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: .8rem;
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-intro {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 2.8rem;
+  }
+
+  /* ─── KPI ROW ─────────────────────────────── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.2rem;
+    margin-bottom: 3rem;
+  }
+  .kpi {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,.06);
+    border-top: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.4rem 1.2rem;
+  }
+  .kpi-val {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    line-height: 1;
+    margin-bottom: .35rem;
+  }
+  .kpi-label { font-size: .82rem; color: var(--muted); }
+
+  /* ─── CHART CONTAINERS ────────────────────── */
+  .chart-grid {
+    display: grid;
+    gap: 1.6rem;
+  }
+  .chart-grid.two-col { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .chart-grid.three-col { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 12px;
+    padding: 1.6rem;
+  }
+  .card h3 {
+    font-size: .9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1.2rem;
+  }
+  .card canvas { display: block; width: 100% !important; }
+
+  /* ─── BAR ROWS (custom) ───────────────────── */
+  .bar-list { display: flex; flex-direction: column; gap: .75rem; }
+  .bar-item-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: .8rem;
+    margin-bottom: .28rem;
+  }
+  .bar-item-name { color: var(--light); }
+  .bar-item-val  { color: var(--muted); font-family: 'Space Mono', monospace; }
+  .bar-track {
+    background: rgba(255,255,255,.06);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  /* ─── FUNNEL ──────────────────────────────── */
+  .funnel-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  @media(max-width:640px) { .funnel-wrap { grid-template-columns: 1fr; } }
+  .funnel-col h4 {
+    font-size: .8rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .funnel-step {
+    background: var(--panel);
+    border-left: 3px solid;
+    padding: .65rem 1rem;
+    margin-bottom: .5rem;
+    border-radius: 0 6px 6px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .85rem;
+  }
+  .funnel-step-name { color: var(--light); }
+  .funnel-step-val  {
+    font-family: 'Space Mono', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+
+  /* ─── PRIORITY MATRIX (SVG) ──────────────── */
+  .matrix-wrap { overflow-x: auto; }
+
+  /* ─── INTERVENTION TABLE ─────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem;
+  }
+  th {
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: .6rem .9rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  td {
+    padding: .7rem .9rem;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    color: var(--light);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block;
+    padding: .2rem .6rem;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-family: 'Space Mono', monospace;
+  }
+  .pill-red   { background: rgba(233,69,96,.18);  color: var(--accent); }
+  .pill-warm  { background: rgba(245,166,35,.18); color: var(--warm); }
+  .pill-teal  { background: rgba(0,180,216,.18);  color: var(--teal); }
+  .pill-green { background: rgba(123,237,159,.18);color: var(--green); }
+
+  /* ─── TIMELINE ────────────────────────────── */
+  .timeline-controls {
+    display: flex;
+    gap: .6rem;
+    margin-bottom: 1.4rem;
+    flex-wrap: wrap;
+  }
+  .tl-btn {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--muted);
+    border-radius: 6px;
+    padding: .4rem .9rem;
+    font-size: .78rem;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .tl-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* ─── FOOTER ──────────────────────────────── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ─── SCROLL REVEAL ───────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-eyebrow">Data Storytelling · Public Health · United States</div>
+  <h1>The <em>Silent</em><br>Epidemic</h1>
+  <p class="hero-sub">America's mental health crisis — visualized across seven stages of inquiry: from the scale of the problem to the interventions that can close the gap.</p>
+
+  <div class="people-grid" id="peopleGrid"></div>
+
+  <div class="grid-legend">
+    <span><span class="legend-dot" style="background:var(--accent)"></span>Untreated mental illness (11%)</span>
+    <span><span class="legend-dot" style="background:var(--warm)"></span>In treatment (9%)</span>
+    <span><span class="legend-dot" style="background:rgba(255,255,255,.18)"></span>No current illness (80%)</span>
+  </div>
+</section>
+
+<!-- ── NAV ───────────────────────────────────────────────── -->
+<nav>
+  <a href="#context">Context</a>
+  <a href="#conflict">Conflict</a>
+  <a href="#journey">Journey</a>
+  <a href="#resolution">Resolution</a>
+  <a href="#action">Call to Action</a>
+  <a href="#emotional">Human Cost</a>
+</nav>
+
+<!-- ── CONTEXT ───────────────────────────────────────────── -->
+<section class="section reveal" id="context">
+  <div class="section-tag">Step 2 · Context</div>
+  <h2>The Scale of the Crisis</h2>
+  <p class="section-intro">Mental illness affects one in five Americans. Rates have climbed every year since 2011 — and the COVID-19 pandemic accelerated what was already a worsening trend.</p>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-val">57.8M</div><div class="kpi-label">Americans living with mental illness</div></div>
+    <div class="kpi"><div class="kpi-val">55%</div><div class="kpi-label">receive zero treatment</div></div>
+    <div class="kpi"><div class="kpi-val">#2</div><div class="kpi-label">cause of death, ages 10–34</div></div>
+    <div class="kpi"><div class="kpi-val">$280B</div><div class="kpi-label">lost to economy annually</div></div>
+  </div>
+
+  <!-- Trend chart + conditions donut -->
+  <div class="chart-grid two-col reveal">
+    <div class="card">
+      <h3>Prevalence Trends 2011–2023</h3>
+      <div class="timeline-controls">
+        <button class="tl-btn active" data-metric="Any Mental Illness">Overall</button>
+        <button class="tl-btn" data-metric="Anxiety Disorders">Anxiety</button>
+        <button class="tl-btn" data-metric="Depression">Depression</button>
+        <button class="tl-btn" data-metric="Substance Use Disorder">Substance Use</button>
+      </div>
+      <canvas id="trendChart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h3>Conditions by Category</h3>
+      <canvas id="donutChart" height="240"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONFLICT ──────────────────────────────────────────── -->
+<section class="section reveal" id="conflict">
+  <div class="section-tag">Step 3 · Conflict</div>
+  <h2>The Treatment Gap</h2>
+  <p class="section-intro">Needing help and getting help are two very different things in America. Some conditions leave 8 in 10 patients without any professional care.</p>
+
+  <div class="chart-grid two-col">
+    <div class="card reveal">
+      <h3>% of Patients Receiving No Treatment</h3>
+      <div class="bar-list" id="gapBars"></div>
+    </div>
+    <div class="card reveal">
+      <h3>Conditions — Prevalence vs Treatment Gap</h3>
+      <canvas id="bubbleChart" height="290"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ── JOURNEY ───────────────────────────────────────────── -->
+<section class="section reveal" id="journey">
+  <div class="section-tag">Step 4 · Journey</div>
+  <h2>Who Is Affected, and Why They Don't Get Help</h2>
+  <p class="section-intro">Young adults carry the highest burden yet see the lowest treatment rates. Structural barriers — cost, provider shortages — outweigh personal reluctance.</p>
+
+  <div class="chart-grid three-col reveal">
+    <div class="card">
+      <h3>Prevalence by Age Group</h3>
+      <canvas id="ageChart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h3>Prevalence vs Treatment Rate by Gender</h3>
+      <canvas id="genderChart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h3>COVID-19 Impact on Prevalence</h3>
+      <canvas id="covidChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="card reveal" style="margin-top:1.6rem">
+    <h3>Why People Don't Seek Treatment</h3>
+    <div class="bar-list" id="barrierBars"></div>
+  </div>
+</section>
+
+<!-- ── RESOLUTION ────────────────────────────────────────── -->
+<section class="section reveal" id="resolution">
+  <div class="section-tag">Step 5 · Resolution</div>
+  <h2>The Treatment Funnel</h2>
+  <p class="section-intro">Where we lose people today — and where evidence-based interventions can win them back.</p>
+
+  <div class="funnel-wrap reveal">
+    <div class="funnel-col">
+      <h4 style="color:var(--accent)">Current Reality</h4>
+      <div id="funnelCurrent"></div>
+    </div>
+    <div class="funnel-col">
+      <h4 style="color:var(--green)">With Interventions</h4>
+      <div id="funnelPossible"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CALL TO ACTION ─────────────────────────────────────── -->
+<section class="section reveal" id="action">
+  <div class="section-tag">Step 6 · Call to Action</div>
+  <h2>Highest-Impact Policies</h2>
+  <p class="section-intro">Not all interventions are equal. These eight actions, ranked by combined impact and feasibility, offer the clearest path to closing the treatment gap.</p>
+
+  <div class="card reveal">
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Intervention</th>
+          <th>Annual Cost</th>
+          <th>Gap Reduction</th>
+          <th>People Reached</th>
+          <th>Timeline</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody id="interventionTable"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Priority matrix chart -->
+  <div class="card reveal" style="margin-top:1.6rem">
+    <h3>Priority Matrix — Impact vs. Feasibility</h3>
+    <canvas id="matrixChart" height="320"></canvas>
+  </div>
+</section>
+
+<!-- ── EMOTIONAL APPEAL ───────────────────────────────────── -->
+<section class="section reveal" id="emotional">
+  <div class="section-tag">Step 7 · Human Cost</div>
+  <h2>A Generation in Crisis</h2>
+  <p class="section-intro">Gen Z's mental health has deteriorated faster than any other demographic. And states that invest more in care have measurably lower youth suicide rates.</p>
+
+  <div class="chart-grid two-col reveal">
+    <div class="card">
+      <h3>Gen Z Mental Health 2012–2023</h3>
+      <canvas id="genzChart" height="260"></canvas>
+    </div>
+    <div class="card">
+      <h3>MH Spending vs Youth Suicide Rate</h3>
+      <canvas id="spendingChart" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Conclusion cards -->
+  <div class="kpi-row reveal" style="margin-top:3rem">
+    <div class="kpi" style="border-top-color:var(--teal)">
+      <div class="kpi-val" style="color:var(--teal); font-size:1.4rem">57.8M</div>
+      <div class="kpi-label">Americans affected — a number that keeps growing</div>
+    </div>
+    <div class="kpi" style="border-top-color:var(--warm)">
+      <div class="kpi-val" style="color:var(--warm); font-size:1.4rem">18–25</div>
+      <div class="kpi-label">Highest-prevalence age group, lowest treatment rate</div>
+    </div>
+    <div class="kpi" style="border-top-color:var(--green)">
+      <div class="kpi-val" style="color:var(--green); font-size:1.4rem">13M+</div>
+      <div class="kpi-label">Additional people who could receive care with proposed interventions</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Data modeled after SAMHSA NSDUH · CDC NCHS · NAMI · Kaiser Family Foundation · CDC BRFSS<br>
+  <span style="color:rgba(255,255,255,.25)">The Silent Epidemic: America's Mental Health Crisis — Data Storytelling Project</span>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const YEARS = [2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023];
+const TRENDS = {
+  'Any Mental Illness':     [18.5,18.6,18.5,18.1,17.9,18.3,18.9,19.1,19.9,20.6,21.0,22.8,23.1],
+  'Anxiety Disorders':      [18.1,18.4,18.3,18.1,18.3,19.1,19.5,19.6,20.0,22.5,29.0,31.1,33.0],
+  'Depression':             [7.6,7.8,7.9,7.8,8.0,8.3,8.6,8.9,9.1,10.8,14.8,16.1,17.3],
+  'Substance Use Disorder': [8.9,8.8,8.9,8.5,8.1,8.4,8.5,8.1,8.7,9.3,8.5,9.1,9.5]
+};
+const CONDITIONS = [
+  {name:'Anxiety Disorders',     prev:33.0, gap:57, cat:'Mood/Anxiety'},
+  {name:'Major Depression',      prev:17.3, gap:52, cat:'Mood/Anxiety'},
+  {name:'PTSD',                  prev:9.1,  gap:75, cat:'Trauma'},
+  {name:'Substance Use Disorder',prev:9.5,  gap:80, cat:'Substance'},
+  {name:'ADHD (Adults)',         prev:8.7,  gap:45, cat:'Neurodevelopmental'},
+  {name:'Bipolar Disorder',      prev:4.4,  gap:40, cat:'Mood/Anxiety'},
+  {name:'OCD',                   prev:3.1,  gap:50, cat:'Mood/Anxiety'},
+  {name:'Eating Disorders',      prev:2.7,  gap:60, cat:'Behavioral'},
+  {name:'Schizophrenia',         prev:1.1,  gap:35, cat:'Psychotic'}
+];
+const BARRIERS = [
+  {name:'Cost / No Insurance',          pct:47, type:'Structural'},
+  {name:'Stigma / Shame',               pct:41, type:'Personal'},
+  {name:'Felt Could Handle Alone',      pct:38, type:'Personal'},
+  {name:'Did Not Know Where to Go',     pct:29, type:'Structural'},
+  {name:'Fear of Judgment',             pct:31, type:'Personal'},
+  {name:'No Available Providers',       pct:26, type:'Structural'},
+  {name:'Transportation / Distance',    pct:21, type:'Structural'},
+  {name:'Negative Past Experience',     pct:18, type:'Personal'}
+].sort((a,b) => b.pct - a.pct);
+
+const FUNNEL_STAGES = ['Adults w/ Mental Illness','Aware of Condition','Consider Seeking Help','Attempt to Access Care','Enter Treatment','Achieve Recovery'];
+const FUNNEL_CURRENT  = [57.8, 38.0, 27.0, 22.0, 13.5, 7.0];
+const FUNNEL_POSSIBLE = [57.8, 52.0, 43.0, 38.0, 30.0, 20.0];
+
+const INTERVENTIONS = [
+  {name:'Fund 988 Crisis Line',           cost:'$1.2B', gap:3.9,  reach:'2.3M', yrs:1,  score:8.65},
+  {name:'Telehealth Permanent Coverage',  cost:'$2.1B', gap:9.8,  reach:'5.7M', yrs:2,  score:8.85},
+  {name:'School-Based MH Counselors',     cost:'$3.5B', gap:7.5,  reach:'4.3M', yrs:4,  score:7.9},
+  {name:'Anti-Stigma Campaign',           cost:'$0.6B', gap:5.1,  reach:'3.0M', yrs:3,  score:7.75},
+  {name:'Psychiatry Loan Forgiveness',    cost:'$1.8B', gap:6.3,  reach:'3.6M', yrs:7,  score:6.25},
+  {name:'Peer Support Networks',          cost:'$0.9B', gap:4.7,  reach:'2.7M', yrs:2,  score:7.3},
+  {name:'Expand Medicaid MH Coverage',    cost:'$8.2B', gap:14.2, reach:'8.2M', yrs:5,  score:8.35},
+  {name:'Workplace EAP Mandates',         cost:'$0.3B', gap:3.2,  reach:'1.9M', yrs:1,  score:7.9}
+];
+
+const PALETTE = {accent:'#e94560', warm:'#f5a623', teal:'#00b4d8', green:'#7bed9f', muted:'#7070a0', panel:'rgba(255,255,255,.06)'};
+
+// ── CHART DEFAULTS ─────────────────────────────────────────
+Chart.defaults.color = '#7070a0';
+Chart.defaults.borderColor = 'rgba(255,255,255,.06)';
+Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+
+const darkBg = { id:'darkBg', beforeDraw(chart) {
+  const ctx = chart.canvas.getContext('2d');
+  ctx.save(); ctx.fillStyle = '#181830';
+  ctx.fillRect(0,0,chart.width,chart.height); ctx.restore();
+}};
+
+// ── PEOPLE GRID ────────────────────────────────────────────
+(function buildGrid() {
+  const grid = document.getElementById('peopleGrid');
+  const types = [...Array(11).fill('untreated'),...Array(9).fill('treated'),...Array(80).fill('healthy')];
+  // simple shuffle
+  for(let i=types.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[types[i],types[j]]=[types[j],types[i]];}
+  types.forEach(t => {
+    const el = document.createElement('div');
+    el.className = `person ${t}`;
+    el.innerHTML = `<div class="head"></div><div class="body"></div>`;
+    grid.appendChild(el);
+  });
+})();
+
+// ── TREND CHART ────────────────────────────────────────────
+let trendChart;
+function buildTrendChart(metric) {
+  const canvas = document.getElementById('trendChart');
+  if(trendChart) trendChart.destroy();
+  const data = TRENDS[metric];
+  const color = metric === 'Any Mental Illness' ? PALETTE.accent
+              : metric === 'Anxiety Disorders'  ? PALETTE.teal
+              : metric === 'Depression'          ? PALETTE.warm
+              : PALETTE.green;
+  trendChart = new Chart(canvas, {
+    type: 'line',
+    plugins: [darkBg],
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data,
+        borderColor: color,
+        backgroundColor: color + '18',
+        borderWidth: 2.5,
+        pointRadius: 3,
+        fill: true,
+        tension: 0.35
+      }]
+    },
+    options: {
+      plugins: { legend: {display:false},
+        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y}% of U.S. Adults` }}
+      },
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{maxTicksLimit:7} },
+        y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{callback:v=>v+'%'}, min:5 }
+      },
+      animation: { duration: 600 }
+    }
+  });
+}
+buildTrendChart('Any Mental Illness');
+document.querySelectorAll('.tl-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tl-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    buildTrendChart(this.dataset.metric);
+  });
+});
+
+// ── DONUT CHART ────────────────────────────────────────────
+const catMap = {
+  'Mood/Anxiety':{'prev':0,'color':PALETTE.accent},
+  'Substance':   {'prev':0,'color':PALETTE.warm},
+  'Trauma':      {'prev':0,'color':PALETTE.teal},
+  'Neurodevelopmental':{'prev':0,'color':PALETTE.green},
+  'Behavioral':  {'prev':0,'color':'#b24b6e'},
+  'Psychotic':   {'prev':0,'color':'#9090c0'}
+};
+CONDITIONS.forEach(c => catMap[c.cat].prev += c.prev);
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  plugins: [darkBg],
+  data: {
+    labels: Object.keys(catMap),
+    datasets: [{
+      data: Object.values(catMap).map(v=>v.prev),
+      backgroundColor: Object.values(catMap).map(v=>v.color),
+      borderColor: '#181830',
+      borderWidth: 2,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    cutout: '58%',
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font:{size:11} } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.toFixed(1)}%` } }
+    }
+  }
+});
+
+// ── GAP BARS (custom HTML) ─────────────────────────────────
+const gapSorted = [...CONDITIONS].sort((a,b) => b.gap - a.gap);
+const gapContainer = document.getElementById('gapBars');
+gapSorted.forEach(c => {
+  const color = c.gap >= 70 ? PALETTE.accent : c.gap >= 55 ? PALETTE.warm : PALETTE.teal;
+  gapContainer.innerHTML += `
+    <div>
+      <div class="bar-item-label">
+        <span class="bar-item-name">${c.name}</span>
+        <span class="bar-item-val">${c.gap}%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${c.gap}%;background:${color}"></div></div>
+    </div>`;
+});
+
+// ── BUBBLE CHART ───────────────────────────────────────────
+new Chart(document.getElementById('bubbleChart'), {
+  type: 'bubble',
+  plugins: [darkBg],
+  data: {
+    datasets: CONDITIONS.map(c => ({
+      label: c.name,
+      data: [{ x: c.prev, y: c.gap, r: Math.max(6, c.prev * 0.8) }],
+      backgroundColor: (c.gap >= 70 ? PALETTE.accent : c.gap >= 55 ? PALETTE.warm : PALETTE.teal) + 'aa',
+      borderColor: (c.gap >= 70 ? PALETTE.accent : c.gap >= 55 ? PALETTE.warm : PALETTE.teal),
+      borderWidth: 1
+    }))
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: {
+        label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.x}% prev, ${ctx.raw.y}% untreated`
+      }}
+    },
+    scales: {
+      x: { title:{display:true, text:'Prevalence (%)', color:PALETTE.muted}, grid:{color:'rgba(255,255,255,.04)'} },
+      y: { title:{display:true, text:'Treatment Gap (%)', color:PALETTE.muted}, grid:{color:'rgba(255,255,255,.04)'}, min:25, max:90 }
+    }
+  }
+});
+
+// ── AGE CHART ──────────────────────────────────────────────
+const AGE_GROUPS = ['18-25','26-34','35-44','45-54','55-64','65+'];
+const AGE_PREV   = [33.7,29.0,25.3,21.6,16.5,10.4];
+const AGE_TREAT  = [43.5,45.2,48.5,52.1,56.3,59.8];
+new Chart(document.getElementById('ageChart'), {
+  type: 'bar',
+  plugins: [darkBg],
+  data: {
+    labels: AGE_GROUPS,
+    datasets: [
+      { label:'Prevalence (%)', data:AGE_PREV,  backgroundColor: AGE_PREV.map(v=>v>25?PALETTE.accent+'bb':PALETTE.teal+'bb'), borderRadius:4 },
+      { label:'Treatment Rate (%)', data:AGE_TREAT, type:'line', borderColor:PALETTE.warm, borderWidth:2.5, pointRadius:4, fill:false, yAxisID:'y1' }
+    ]
+  },
+  options: {
+    plugins: { legend:{ labels:{ boxWidth:10, font:{size:10} } } },
+    scales: {
+      x: { grid:{color:'rgba(255,255,255,.04)'} },
+      y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{callback:v=>v+'%'} },
+      y1: { position:'right', grid:{display:false}, ticks:{callback:v=>v+'%'}, min:30, max:70 }
+    }
+  }
+});
+
+// ── GENDER CHART ───────────────────────────────────────────
+new Chart(document.getElementById('genderChart'), {
+  type: 'bar',
+  plugins: [darkBg],
+  data: {
+    labels: ['Women','Men','Non-Binary'],
+    datasets: [
+      { label:'Prevalence (%)', data:[25.8,15.8,39.2], backgroundColor:PALETTE.accent+'bb', borderRadius:4 },
+      { label:'Treatment Rate (%)', data:[50.3,35.1,28.4], backgroundColor:PALETTE.teal+'bb', borderRadius:4 }
+    ]
+  },
+  options: {
+    plugins: { legend:{ labels:{ boxWidth:10, font:{size:10} } } },
+    scales: {
+      x: { grid:{display:false} },
+      y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{callback:v=>v+'%'} }
+    }
+  }
+});
+
+// ── COVID CHART ────────────────────────────────────────────
+new Chart(document.getElementById('covidChart'), {
+  type: 'bar',
+  plugins: [darkBg],
+  data: {
+    labels: ['Anxiety','Depression','PTSD','Substance Use','Eating Disorders'],
+    datasets: [
+      { label:'Pre-COVID 2019', data:[19.1,8.9,7.7,8.1,2.2], backgroundColor:PALETTE.teal+'99', borderRadius:3 },
+      { label:'During 2020',    data:[29.0,14.8,9.8,8.5,3.5], backgroundColor:PALETTE.warm+'99', borderRadius:3 },
+      { label:'Post-COVID 2023',data:[33.0,17.3,9.1,9.5,2.7], backgroundColor:PALETTE.accent+'99', borderRadius:3 }
+    ]
+  },
+  options: {
+    plugins: { legend:{ labels:{ boxWidth:10, font:{size:10} } } },
+    scales: {
+      x: { grid:{display:false}, ticks:{font:{size:9}} },
+      y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{callback:v=>v+'%'} }
+    }
+  }
+});
+
+// ── BARRIER BARS ───────────────────────────────────────────
+const barrierContainer = document.getElementById('barrierBars');
+BARRIERS.forEach(b => {
+  const color = b.type === 'Structural' ? PALETTE.accent : PALETTE.teal;
+  const pillClass = b.type === 'Structural' ? 'pill-red' : 'pill-teal';
+  barrierContainer.innerHTML += `
+    <div>
+      <div class="bar-item-label">
+        <span class="bar-item-name">${b.name} <span class="pill ${pillClass}">${b.type}</span></span>
+        <span class="bar-item-val">${b.pct}%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${b.pct}%;background:${color}"></div></div>
+    </div>`;
+});
+
+// ── FUNNEL ─────────────────────────────────────────────────
+function buildFunnel(containerId, data, color) {
+  const container = document.getElementById(containerId);
+  FUNNEL_STAGES.forEach((s,i) => {
+    const el = document.createElement('div');
+    el.className = 'funnel-step';
+    el.style.borderLeftColor = color;
+    el.style.opacity = 1 - i * 0.08;
+    el.innerHTML = `<span class="funnel-step-name">${s}</span><span class="funnel-step-val">${data[i]}M</span>`;
+    container.appendChild(el);
+  });
+}
+buildFunnel('funnelCurrent',  FUNNEL_CURRENT,  PALETTE.accent);
+buildFunnel('funnelPossible', FUNNEL_POSSIBLE, PALETTE.green);
+
+// ── INTERVENTION TABLE ─────────────────────────────────────
+const tbody = document.getElementById('interventionTable');
+const sorted = [...INTERVENTIONS].sort((a,b) => b.score - a.score);
+sorted.forEach((item, i) => {
+  const pillClass = i < 3 ? 'pill-green' : i < 5 ? 'pill-warm' : 'pill-teal';
+  const scoreLabel = i < 3 ? 'High Priority' : i < 5 ? 'Medium' : 'Supportive';
+  tbody.innerHTML += `
+    <tr>
+      <td style="font-weight:600;color:#fff">${item.name}</td>
+      <td style="font-family:'Space Mono',monospace">${item.cost}</td>
+      <td style="color:var(--green)">↓ ${item.gap}pp</td>
+      <td>${item.reach}</td>
+      <td>${item.yrs} yr${item.yrs>1?'s':''}</td>
+      <td><span class="pill ${pillClass}">${scoreLabel}</span></td>
+    </tr>`;
+});
+
+// ── PRIORITY MATRIX ────────────────────────────────────────
+const MATRIX_DATA = [
+  {name:'Fund 988 Crisis Line',           impact:8.5, feas:8.8},
+  {name:'Mandate Insurance Parity',       impact:9.0, feas:7.5},
+  {name:'Telehealth Coverage',            impact:9.2, feas:8.5},
+  {name:'School MH Counselors',           impact:7.8, feas:8.0},
+  {name:'Reduce Psychiatry Debt',         impact:6.5, feas:6.0},
+  {name:'Public Stigma Campaign',         impact:7.0, feas:8.5},
+  {name:'Peer Recovery Pay',              impact:6.2, feas:7.8},
+  {name:'Rural Telehealth Grants',        impact:7.5, feas:7.0}
+];
+new Chart(document.getElementById('matrixChart'), {
+  type: 'scatter',
+  plugins: [darkBg],
+  data: {
+    datasets: [{
+      data: MATRIX_DATA.map(d=>({x:d.feas, y:d.impact, label:d.name})),
+      backgroundColor: MATRIX_DATA.map(d => {
+        const score = (d.feas + d.impact) / 2;
+        return score >= 8.5 ? PALETTE.green+'cc' : score >= 7.5 ? PALETTE.warm+'cc' : PALETTE.teal+'cc';
+      }),
+      borderColor: 'rgba(255,255,255,.2)',
+      pointRadius: 9,
+      pointHoverRadius: 12
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: {
+        label: ctx => ` ${ctx.raw.label}`,
+        afterLabel: ctx => `Impact: ${ctx.raw.y} | Feasibility: ${ctx.raw.x}`
+      }},
+      annotation: {}
+    },
+    scales: {
+      x: { min:5.5, max:9.5, title:{display:true, text:'Implementation Feasibility (1–10)', color:PALETTE.muted}, grid:{color:'rgba(255,255,255,.04)'} },
+      y: { min:5.5, max:9.8, title:{display:true, text:'Projected Impact (1–10)', color:PALETTE.muted}, grid:{color:'rgba(255,255,255,.04)'} }
+    }
+  }
+});
+
+// ── GEN Z CHART ────────────────────────────────────────────
+const GENZ_YEARS = [2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023];
+new Chart(document.getElementById('genzChart'), {
+  type: 'line',
+  plugins: [darkBg],
+  data: {
+    labels: GENZ_YEARS,
+    datasets: [
+      { label:'Anxiety (%)',          data:[18,20,22,24,27,29,30,32,35,45,42,44], borderColor:PALETTE.accent, borderWidth:2.5, pointRadius:3, fill:false, tension:.35 },
+      { label:'Depression (%)',       data:[11,12,14,15,17,18,19,21,24,32,29,31], borderColor:PALETTE.warm,   borderWidth:2.5, pointRadius:3, fill:false, tension:.35 },
+      { label:'Self-Harm Reports (%)',data:[5,5,6,7,8,9,10,11,13,16,15,16],       borderColor:'#b24b6e',      borderWidth:2,   pointRadius:3, fill:false, tension:.35 },
+      { label:'Treatment Access (%)', data:[27,28,29,30,31,32,33,35,37,42,43,44], borderColor:PALETTE.green,  borderWidth:2.5, pointRadius:3, fill:false, tension:.35 }
+    ]
+  },
+  options: {
+    plugins: { legend:{ labels:{ boxWidth:10, font:{size:10} } } },
+    scales: {
+      x: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{maxTicksLimit:6} },
+      y: { grid:{color:'rgba(255,255,255,.04)'}, ticks:{callback:v=>v+'%'} }
+    }
+  }
+});
+
+// ── SPENDING VS SUICIDE CHART ─────────────────────────────
+// Simulated state-level data (correlation r ≈ -0.55)
+(function() {
+  const seed = (n) => { let s=n; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; };
+  const rng = seed(42);
+  const spending = Array.from({length:50}, (_,i) => 80 + rng()*310);
+  const suicide  = spending.map(s => Math.max(5, Math.min(22, 20 - 0.025*s + (rng()-.5)*4)));
+  new Chart(document.getElementById('spendingChart'), {
+    type: 'scatter',
+    plugins: [darkBg],
+    data: {
+      datasets: [{
+        data: spending.map((s,i)=>({x:s, y:suicide[i]})),
+        backgroundColor: PALETTE.accent + '88',
+        borderColor: PALETTE.accent,
+        pointRadius: 6,
+        pointHoverRadius: 9
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {display:false},
+        tooltip: { callbacks:{ label: ctx => ` $${ctx.raw.x.toFixed(0)}/capita → ${ctx.raw.y.toFixed(1)} per 100k` } }
+      },
+      scales: {
+        x: { title:{display:true, text:'MH Spending per Capita ($)', color:PALETTE.muted}, grid:{color:'rgba(255,255,255,.04)'} },
+        y: { title:{display:true, text:'Youth Suicide Rate (per 100k)', color:PALETTE.muted}, grid:{color:'rgba(255,255,255,.04)'} }
+      }
+    }
+  });
+})();
+
+// ── SCROLL REVEAL ─────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
